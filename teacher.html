@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Assignment</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="auth.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Add Assignment</h1>
+  </header>
+  <main>
+    <form id="assignmentForm">
+      <label>Title:<br><input type="text" id="title" required></label><br>
+      <label>Description:<br><textarea id="description"></textarea></label><br>
+      <label>Due Date:<br><input type="date" id="dueDate" required></label><br>
+      <label>Due Time:<br><input type="time" id="dueTime" required></label><br>
+      <button type="submit" class="btn">Add</button>
+    </form>
+    <div id="message" style="font-weight:bold;margin-top:10px;"></div>
+  </main>
+  <script>
+  document.getElementById('assignmentForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const title = document.getElementById('title').value.trim();
+    const description = document.getElementById('description').value.trim();
+    const dueDate = document.getElementById('dueDate').value;
+    const dueTime = document.getElementById('dueTime').value;
+    if(!title || !dueDate || !dueTime) return;
+    const items = JSON.parse(localStorage.getItem('teacherAssignments') || '[]');
+    items.push({title, description, dueDate, dueTime});
+    localStorage.setItem('teacherAssignments', JSON.stringify(items));
+    document.getElementById('message').textContent = 'Assignment added!';
+    document.getElementById('assignmentForm').reset();
+  });
+  </script>
+</body>
+</html>

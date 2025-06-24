@@ -1,6 +1,6 @@
 function isLoggedIn() {
   const email = localStorage.getItem('email');
-  return email && email.endsWith('@wyomingarea.org');
+  return email && email.endsWith('@wyomingarea.org' || email === 'teacheronly');
 }
 
 function updateLoginUI() {

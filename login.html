@@ -10,9 +10,11 @@
 <body class="login-page">
   <h1 class="login-title">HISTORYwithMRH</h1>
   <div class="login-container">
-    <form id="loginForm">
+    <form id="loginForm" action="/login" method="POST">
       <label for="email">School Email:</label>
-      <input type="email" id="email" name="email" required>
+      <input type="text" id="email" name="email" required
+        pattern="^(teacheronly|[\w.+-]+@wyomingarea\.org)$"
+        title="Enter your school email or 'teacheronly'">
       <button type="submit" class="login-btn">Login</button>
     </form>
     <div id="errorMsg" style="color:red;font-weight:bold"></div>
@@ -20,10 +22,12 @@
     <script>
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       const email = document.getElementById('email').value.trim().toLowerCase();
-      if (email.endsWith('@wyomingarea.org')) {
+       if (email === 'teacheronly') {
         e.preventDefault();
+        localStorage.setItem('email', 'teacheronly');
+        window.location.href = 'teacher.html';
+      } else if (email.endsWith('@wyomingarea.org')) {
         localStorage.setItem('email', email);
-        window.location.href = '/';
       } else {
         e.preventDefault();
         document.getElementById('errorMsg').textContent = 'Denied Access!';
