@@ -61,7 +61,7 @@ function handleLogin(req, res) {
       sessions[sid] = { email };
       res.writeHead(302, {
         'Set-Cookie': `sid=${sid}; HttpOnly`,
-        'Location': '/'
+        'Location': target
       });
       res.end();
     } else {

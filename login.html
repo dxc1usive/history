@@ -21,13 +21,11 @@
     </div>
     <script>
     document.getElementById('loginForm').addEventListener('submit', function(e) {
-      const email = document.getElementById('email').value.trim().toLowerCase();
-       if (email === 'teacheronly') {
-        e.preventDefault();
-        localStorage.setItem('email', 'teacheronly');
-        window.location.href = 'teacher.html';
-      } else if (email.endsWith('@wyomingarea.org')) {
+      const emailEl = document.getElementById('email');
+       const email = emailEl.value.trim().toLowerCase();
+      if (email === 'teacheronly' || email.endsWith('@wyomingarea.org')) {
         localStorage.setItem('email', email);
+        emailEl.value = email;
       } else {
         e.preventDefault();
         document.getElementById('errorMsg').textContent = 'Denied Access!';
