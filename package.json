@@ -1,0 +1,12 @@
+{
+  "name": "historywithmrh",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "node test.js",
+    "sync-calendar": "node syncCalendarToSheet.js"
+  },
+  "dependencies": {
+    "googleapis": "^130.0.0"
+  }
+}

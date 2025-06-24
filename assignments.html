@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Assignments</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+    }
+    .back-btn {
+       margin-right: 10px;
+    }
+    .status-select {
+      font-size: 1em;
+      padding: 5px 10px;
+    }
+    .assignment {
+      border-bottom: 1px solid #ccc;
+      padding: 10px;
+    }
+    .assignment h3 {
+      margin: 0;
+    }
+    .assignment p {
+       margin: 5px 0;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+  <script src="auth.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Assignments</h1>
+  </header>
+  <main>
+    <div class="top-bar">
+      <button class="back-btn btn" onclick="window.history.back()">← Back</button>
+      <select id="statusFilter" class="status-select" onchange="updateAssignmentStatuses(); filterAssignments();">
+        <option value="todo"selected>To Do</option>
+        <option value="complete" >Complete</option>
+        <option value="all">Show All</option>
+      </select>
+    </div>
+    <div id="assignments-container">
+      <p>Loading assignments...</p>
+    </div>
+  </main>
+  <script>
+    function parseCSVRow(row) {
+      row = row.trim();
+      const cells = row.match(/("[^"]*"|[^,]+)/g) || [];
+      return cells.map(c => c.trim().replace(/^"|"$/g, '').replace(/""/g, '"'));
+    }
+    let assignmentsData = [];
+
+    async function fetchAssignments() {
+      const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRvXvy8Y8j4SKTGmgOTnuPNfKf2ZR0UThzEQ5LcUXw6HHtdvnY3JQdMxFmvyU0MjjF84O_i7hZ4Btf1/pub?output=csv";
+ let data = '';
+      try {
+        const response = await fetch(sheetURL);
+        if (!response.ok) throw new Error('Request failed');
+        data = await response.text();
+      } catch (_e) {
+        // Fallback to local data when offline
+        const local = await fetch('assignments.csv');
+        data = await local.text();
+      }
+
+      const rows = data.split("\n").slice(1); // Skip header row
+
+      const now = new Date();
+      const container = document.getElementById("assignments-container");
+      container.innerHTML = "";
+      assignmentsData = [];
+
+      rows.forEach((row) => {
+        const [title, description, dueDate, dueTime] = parseCSVRow(row);
+        if (title && dueDate && dueTime) {
+          const time = dueTime.replace(/(am|pm)$/i, ' $1');
+          let dueDateTime = new Date(`${dueDate} ${dueTime}`);
+          if (isNaN(dueDateTime)) {
+            dueDateTime = new Date(`${dueDate}T${dueTime}:00`);
+          }
+          if (isNaN(dueDateTime)) {
+            return;
+          }
+          const status = dueDateTime <= now ? 'complete' : 'todo';
+
+          const div = document.createElement("div");
+          div.className = `assignment ${status}`;
+          div.setAttribute("data-status", status);
+          div.innerHTML = `
+            <h3>${title}</h3>
+            <p><strong>Due:</strong> ${dueDate} at ${dueTime}</p>
+            <p>${description}</p>
+          `;
+          container.appendChild(div);
+          assignmentsData.push({ element: div, dueDateTime, status });
+        }
+      });
+
+      updateAssignmentStatuses();
+      filterAssignments();
+    }
+
+    function filterAssignments() {
+      updateAssignmentStatuses();
+      const filter = document.getElementById('statusFilter').value;
+      const assignments = document.querySelectorAll('.assignment');
+      assignments.forEach(assignment => {
+        const status = assignment.getAttribute("data-status");
+        if (filter === 'all' || filter === status) {
+          assignment.classList.remove('hidden');
+        } else {
+          assignment.classList.add('hidden');
+        }
+      });
+    }
+
+    function updateAssignmentStatuses() {
+      const now = new Date();
+      assignmentsData.forEach(item => {
+        if (item.status === "todo" && item.dueDateTime <= now) {
+          item.status = "complete";
+          item.element.classList.remove("todo");
+          item.element.classList.add("complete");
+          item.element.setAttribute("data-status", "complete");
+        }
+      });
+    }
+
+    fetchAssignments();
+    setInterval(() => {
+      updateAssignmentStatuses();
+      filterAssignments();
+    }, 60000);
+  </script>
+</body>
+</html>

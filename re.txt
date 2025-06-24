@@ -1,0 +1,30 @@
+<div style="margin: 20px;">
+  <button class="back-btn btn" onclick="window.history.back()">← Back</button>
+</div>
+
+    <section>
+      <button class="back-btn btn" onclick="window.history.back()">← Back</button>
+      <h1 class="page-title">APUSH Resources</h1>
+      <ul>
+        <li><a href="https://www.tomrichey.net/uploads/3/2/1/0/32100773/apush_dbq_rubric.pdf" target="_blank">DBQ Rubric (Tom Richey PDF)</a></li>
+        <li><a href="https://www.tomrichey.net/uploads/3/2/1/0/32100773/apush_leq_rubric.pdf" target="_blank">LEQ Rubric (Tom Richey PDF)</a></li>
+      </ul>
+    </section>
+    <section>
+      <h2>Downloadable Templates</h2>
+      <ul>
+        <li><a href="http://www.rooseveltcpush.com/uploads/2/3/5/4/23544792/hippos_apush.pdf" target="_blank">HIPPOS Analysis Worksheet (PDF)</a></li>
+        <li><a href="https://apcentral.collegeboard.org/courses/ap-united-states-history/exam/past-exam-questions" target="_blank">College Board DBQ Samples (PDF)</a></li>
+      </ul>
+    </section>
+    <section>
+      <h2>External Tools</h2>
+      <ul>
+        <li><a href="https://www.tomrichey.net/apush.html" target="_blank">Tom Richey's APUSH Portal</a></li>
+        <li><a href="https://www.youtube.com/watch?v=X_3bH6FJsLA&list=PLEHRHjICEfDUkwlhx0SFi4-dgPI82_Wn3" target="_blank">Heimler's History Youtube</a></li>
+        <li><a href="https://www.khanacademy.org/humanities/us-history" target="_blank">Khan Academy: U.S. History</a></li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

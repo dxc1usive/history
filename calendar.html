@@ -1,0 +1,32 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Class Calendar</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    iframe {
+      width: 100%;
+      height: 90vh;
+      border: none;
+    }
+    .back-btn {
+      margin: 20px;
+    }
+  </style>
+  <script src="auth.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Class Calendar</h1>
+  </header>
+  <main>
+    <div>
+      <button class="back-btn btn" onclick="window.history.back()">← Back</button>
+    </div>
+    <iframe src="https://calendar.google.com/calendar/embed?src=b265b20f1b20ebb155592898ade23a53ff62ed0aecc35e8777cd2ba64fdfa0f8@group.calendar.google.com&ctz=America/New_York" title="Class Calendar"></iframe>
+  </main>
+</body>
+</html>
