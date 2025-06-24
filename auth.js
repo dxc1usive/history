@@ -1,11 +1,14 @@
 function isLoggedIn() {
   const email = localStorage.getItem('email');
-  return email && email.endsWith('@wyomingarea.org' || email === 'teacheronly');
+  return email && (email.endsWith('@wyomingarea.org') || email === 'teacheronly');
 }
 
 function updateLoginUI() {
   const link = document.getElementById('loginLink');
   const messageEl = document.getElementById('loginMessage');
+  const teacherLink = document.getElementById('teacherLink');
+  const email = localStorage.getItem('email');
+  const isTeacher = email === 'teacheronly';
   if (isLoggedIn()) {
     if (link) {
       link.textContent = 'Logout';
@@ -20,6 +23,7 @@ function updateLoginUI() {
     }
     if (messageEl) messageEl.textContent = "This is for Hizzy's students only";
   }
+  if (teacherLink) teacherLink.style.display = isTeacher ? '' : 'none';
 }
 
 function requireLogin() {

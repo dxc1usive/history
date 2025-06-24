@@ -13,10 +13,6 @@ function isLoggedIn(req) {
   return sid && sessions[sid];
 }
 
-function isTeacher(req) {
-  const session = isLoggedIn(req);
-  return session && session.teacher;
-}
 
 function serveFile(res, filePath, contentType, status = 200) {
   fs.readFile(filePath, (err, data) => {
@@ -59,6 +55,7 @@ function handleLogin(req, res) {
     if (email.endsWith('@wyomingarea.org') || email === 'teacheronly') {
       const sid = crypto.randomBytes(16).toString('hex');
       sessions[sid] = { email };
+      const target = email === 'teacheronly' ? '/teacher.html' : '/';
       res.writeHead(302, {
         'Set-Cookie': `sid=${sid}; HttpOnly; path=/`,
         'Location': target

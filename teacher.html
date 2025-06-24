@@ -6,12 +6,19 @@
   <title>Add Assignment</title>
   <link rel="stylesheet" href="style.css">
   <script src="auth.js"></script>
+  <style>
+    .teacher-wrapper { display:flex; gap:20px; align-items:flex-start; }
+    #assignmentForm { flex:1; max-width:300px; }
+    #assignmentList { flex:2; }
+    #assignmentList table { width:100%; border-collapse:collapse; }
+    #assignmentList th, #assignmentList td { border:1px solid #ccc; padding:4px; text-align:left; }
+  </style>
 </head>
 <body>
   <header>
     <h1>Add Assignment</h1>
   </header>
-  <main>
+  <main class="teacher-wrapper">
     <form id="assignmentForm">
       <label>Title:<br><input type="text" id="title" required></label><br>
       <label>Description:<br><textarea id="description"></textarea></label><br>
@@ -20,8 +27,48 @@
       <button type="submit" class="btn">Add</button>
     </form>
     <div id="message" style="font-weight:bold;margin-top:10px;"></div>
+    <div id="assignmentList">
+      <h2>Current Assignments</h2>
+      <table>
+        <thead>
+          <tr><th>Title</th><th>Due</th><th>Action</th></tr>
+        </thead>
+        <tbody id="listBody"></tbody>
+      </table>
+    </div>
   </main>
   <script>
+  async function loadAssignments(){
+    const resp = await fetch('/teacher-assignments', {credentials:'include'});
+    if(!resp.ok) return;
+    const items = await resp.json();
+    const body = document.getElementById('listBody');
+    body.innerHTML = '';
+    items.forEach(item => {
+      const tr = document.createElement('tr');
+      tr.innerHTML =
+        `<td>${item.title}</td><td>${item.dueDate} ${item.dueTime}</td>` +
+        `<td><button type="button" data-id="${item.id}">Remove</button></td>`;
+      body.appendChild(tr);
+    });
+  }
+
+  document.getElementById('listBody').addEventListener('click', async e => {
+    const btn = e.target.closest('button[data-id]');
+    if (btn) {
+      const id = btn.getAttribute('data-id');
+      const resp = await fetch('/delete-assignment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ id })
+      });
+      if (resp.ok) {
+        btn.closest('tr').remove();
+      }
+    }
+  });
+
   document.getElementById('assignmentForm').addEventListener('submit', async function(e){
     e.preventDefault();
     const title = document.getElementById('title').value.trim();
@@ -35,13 +82,22 @@
       credentials: 'include',
       body: JSON.stringify({ title, description, dueDate, dueTime })
     });
+    const messageEl = document.getElementById('message');
     if(resp.ok){
-      document.getElementById('message').textContent = 'Assignment added!';
+      messageEl.textContent = 'Assignment added!';
       document.getElementById('assignmentForm').reset();
+      loadAssignments();
     } else {
-      document.getElementById('message').textContent = 'Failed to add assignment';
+      if(resp.status === 403){
+        messageEl.textContent = 'Login required to add assignments.';
+      } else if(resp.status === 400) {
+        messageEl.textContent = 'Invalid assignment data.';
+      } else {
+        messageEl.textContent = 'Failed to add assignment';
+      }
     }
   });
+  loadAssignments();
   </script>
 </body>
 </html>
