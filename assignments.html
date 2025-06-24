@@ -106,6 +106,7 @@
           assignmentsData.push({ element: div, dueDateTime, status });
         }
       });
+
     const localItems = JSON.parse(localStorage.getItem('teacherAssignments') || '[]');
       localItems.forEach(item => {
         const { title, description, dueDate, dueTime } = item;
@@ -125,6 +126,32 @@
           assignmentsData.push({ element: div, dueDateTime, status });
         }
       });
+try {
+        const resp = await fetch('/teacher-assignments');
+        if (resp.ok) {
+          const localItems = await resp.json();
+          localItems.forEach(item => {
+            const { title, description, dueDate, dueTime } = item;
+            if (title && dueDate && dueTime) {
+              let dueDateTime = new Date(`${dueDate}T${dueTime}`);
+              if (isNaN(dueDateTime)) return;
+              const status = dueDateTime <= now ? 'complete' : 'todo';
+              const div = document.createElement('div');
+              div.className = `assignment ${status}`;
+              div.setAttribute('data-status', status);
+              div.innerHTML = `
+                <h3>${title}</h3>
+                <p><strong>Due:</strong> ${dueDate} at ${dueTime}</p>
+                <p>${description}</p>
+              `;
+              container.appendChild(div);
+              assignmentsData.push({ element: div, dueDateTime, status });
+            }
+          });
+        }
+      } catch (_e) {
+        // ignore fetch errors
+      }
 
       updateAssignmentStatuses();
       filterAssignments();
